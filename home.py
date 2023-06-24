@@ -1,7 +1,7 @@
 # the database file must be wiped before using and then created again in the terminal!
 
-from flask import Flask, render_template, url_for, flash, redirect, request
-from forms import RegistrationForm, LoginForm
+from flask import Flask, render_template, session, url_for, flash, redirect, request
+from forms import RegistrationForm, LoginForm, DietaryRestrictionForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -21,9 +21,6 @@ db = SQLAlchemy(app)
 food_db = SQLAlchemy(app)   # define the food database instance
 bcrypt = Bcrypt(app)
 
-# Account table for database
-
-
 class FoodItem(food_db.Model):
     # id = db.Column(db.Integer, primary_key=True) # might not be necessary
     name = food_db.Column(db.String(100), nullable=False)
@@ -33,7 +30,6 @@ class FoodItem(food_db.Model):
     def __repr__(self):
         return f"FoodItem('{self.name}', '{self.description}')"
 
-
 class User(db.Model):
     email = db.Column(db.String, primary_key=True, unique=True)
     password = db.Column(db.String(50), nullable=False, unique=False)
@@ -41,7 +37,7 @@ class User(db.Model):
     last_name = db.Column(db.String(20), unique=False)
     city = db.Column(db.String, nullable=True)
     country = db.Column(db.String, nullable=True)
-    # will be a list, links to Symptom class
+
     allergies = db.relationship('Allergy', backref="user", lazy=True)
     dietary_restrictions = db.relationship(
         'DietaryRestriction', backref="user", lazy=True)
@@ -49,13 +45,10 @@ class User(db.Model):
     def __repr__(self):  # for testing
         return f"User('{self.email}', '{self.first_name}', '{self.last_name}', '{self.city}', '{self.country}', '{self.first_name}')"
 
-
 # create database file and tables
 with app.app_context():
     db.create_all()
     food_db.create_all()
-
-# Symptom table for database
 
 
 class Allergy(db.Model):
@@ -66,8 +59,6 @@ class Allergy(db.Model):
 
     def __repr__(self):
         return f"Allergy('{self.allergy}', '{self.user_email}')"
-
-# Medical Conditions table for database
 
 
 class DietaryRestriction(db.Model):
@@ -80,7 +71,7 @@ class DietaryRestriction(db.Model):
         return f"DietaryRestriction('{self.dietary_restriction}', '{self.user_email}')"
 
 
-# creates a new home page and functions underneath run on this page unless it encounters another route method (i think)
+# creates a new home page and functions underneath run on this page unless it encounters another route method
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -94,7 +85,51 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    return render_template("register.html")
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        email = form.email.data
+        password = form.password.data
+        city = form.city.data
+        country = form.country.data
+
+        user = User(first_name = first_name, last_name = last_name, email = email, password = password, city = city, country = country)
+        session["user_email"] = user.email
+
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect(url_for('allergy'))
+
+    return render_template("register.html", form = form)
+
+@app.route("/allergy", methods=['GET', 'POST'])
+def allergy():
+
+    # form = AllergyForm()
+    user_email = session.get("user_email", None)
+
+    # if form.validate_on_submit():
+    #     for a in form.allergies.data:
+    #         allergy = Allergy(allergy = a, user_email = user_email)
+    #     return redirect(url_for('dietary-restriction'))
+    
+    if request.method == 'POST':
+        selected_options = request.form.getlist('allergies')
+
+        for a in selected_options:
+            allergy = Allergy(allergy = a, user_email = user_email)
+        return redirect(url_for('dietary-restriction'))
+
+    return render_template("allergy.html")
+
+@app.route("/dietary-restriction", methods=['GET', 'POST'])
+def dietary_restriction():
+    form = DietaryRestrictionForm()
+    return render_template("dietary-restriction.html", form = form)
 
 
 # call function to populate food items database

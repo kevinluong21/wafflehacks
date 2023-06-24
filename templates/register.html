@@ -1,9 +1,138 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
 {% block content %}
-<div class="content-section">
+<div class="container-fluid">
   <form method="POST" action="">
+    {{ form.csrf_token }}
+
+    <fieldset class="form-group">
+      <div class="form-group">
+        {{form.first_name.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.first_name(class="form-control")}}
+
+          {% if form.first_name.errors %}
+          <div class="inform-feedback">
+            {% for error in form.first_name.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.last_name.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.last_name(class="form-control")}}
+
+          {% if form.last_name.errors %}
+          <div class="inform-feedback">
+            {% for error in form.last_name.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.email.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.email(class="form-control")}}
+
+          {% if form.email.errors %}
+          <div class="inform-feedback">
+            {% for error in form.email.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.confirm_email.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.confirm_email(class="form-control")}}
+
+          {% if form.confirm_email.errors %}
+          <div class="inform-feedback">
+            {% for error in form.confirm_email.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.password.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.password(class="form-control")}}
+
+          {% if form.password.errors %}
+          <div class="inform-feedback">
+            {% for error in form.password.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.confirm_password.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.confirm_password(class="form-control")}}
+
+          {% if form.confirm_password.errors %}
+          <div class="inform-feedback">
+            {% for error in form.confirm_password.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.city.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.city(class="form-control")}}
+
+          {% if form.city.errors %}
+          <div class="inform-feedback">
+            {% for error in form.city.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{form.country.label(class="form-control-label")}}
+        <div class="form-outline text">
+          {{form.country(class="form-control")}}
+
+          {% if form.country.errors %}
+          <div class="inform-feedback">
+            {% for error in form.country.errors %}
+            <span>{{error}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+
+    </fieldset>
   </form>
 </div>
+
 <div class="border-top pt-3">
   <small class="text-muted">
     Already Have An Account?
