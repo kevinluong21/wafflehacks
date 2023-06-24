@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # used to protect against modifying cookies! MUST HAVE!
 app.config['SECRET_KEY'] = "b272d0b5e8ddc9e3ff92e6853766147c"
-# create uri for the food items database
+# creates URI for the food items database
 app.config['FOOD_DATABASE_URI'] = "sqlite:///food_items.db"
 # creates a new file of site.db for the database of users
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
