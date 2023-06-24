@@ -65,6 +65,14 @@ class DietaryRestriction(db.Model):
 def home():
     return render_template("home.html")
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    return render_template("login.html")
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    return render_template("register.html")
+
 
 if __name__ == '__main__':  # allows us to run the file using only "python filename.py"
     app.run(debug=True)
