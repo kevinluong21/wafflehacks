@@ -10,7 +10,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "b272d0b5e8ddc9e3ff92e6853766147c" #used to protect against modifying cookies! MUST HAVE!
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db" #creates a new file of site.db
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///users.db" #creates a new file of users.db
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
@@ -52,5 +52,5 @@ class DietaryRestriction(db.Model):
 def home():
     return render_template("home.html")
 
-if __name__ == '__main__': #allows us to run the file using only "python filename.py"
+if __name__ == '__main__': #allows us to run the file using only "python filename.py" or "python3 filename.py"
     app.run(debug=True)
