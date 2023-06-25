@@ -16,11 +16,6 @@ class RegistrationForm(FlaskForm):
 
     submit = SubmitField("Next")
 
-class DietaryRestrictionForm(FlaskForm):
-    dietary_restrictions = SelectMultipleField("Please select your dietary restrictions.", choices=["gluten-free", "dairy-free", 
-    "vegetarian", "vegan", "pescatarian", "nut-free", "shellfish-free", "sugar-free", "kosher", "halal"])
-    submit = SubmitField("Register")
-
 class LoginForm(FlaskForm):
     email = EmailField("Please enter your emaill address")
     password = PasswordField("Please enter your password")
