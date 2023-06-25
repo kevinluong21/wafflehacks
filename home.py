@@ -1,7 +1,7 @@
 # the database file must be wiped before using and then created again in the terminal!
 
 from flask import Flask, render_template, session, url_for, flash, redirect, request
-from forms import RegistrationForm, LoginForm, DietaryRestrictionForm
+from forms import RegistrationForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -17,6 +17,7 @@ app.config['SECRET_KEY'] = "b272d0b5e8ddc9e3ff92e6853766147c"
 app.config['FOOD_DATABASE_URI'] = "sqlite:///food_items.db"
 # creates a new file of site.db for the database of users
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
+app.app_context().push()
 db = SQLAlchemy(app)
 food_db = SQLAlchemy(app)   # define the food database instance
 bcrypt = Bcrypt(app)
@@ -58,7 +59,7 @@ class Allergy(db.Model):
         "user.email"), nullable=False)  # using email as foreign key
 
     def __repr__(self):
-        return f"Allergy('{self.allergy}', '{self.user_email}')"
+        return f"{self.allergy}"
 
 
 class DietaryRestriction(db.Model):
@@ -68,7 +69,7 @@ class DietaryRestriction(db.Model):
         "user.email"), nullable=False)  # using email as foreign key
 
     def __repr__(self):
-        return f"DietaryRestriction('{self.dietary_restriction}', '{self.user_email}')"
+        return f"{self.dietary_restriction}"
 
 
 # creates a new home page and functions underneath run on this page unless it encounters another route method
@@ -108,28 +109,41 @@ def register():
 
 @app.route("/allergy", methods=['GET', 'POST'])
 def allergy():
-
-    # form = AllergyForm()
     user_email = session.get("user_email", None)
-
-    # if form.validate_on_submit():
-    #     for a in form.allergies.data:
-    #         allergy = Allergy(allergy = a, user_email = user_email)
-    #     return redirect(url_for('dietary-restriction'))
     
     if request.method == 'POST':
         selected_options = request.form.getlist('allergies')
 
         for a in selected_options:
             allergy = Allergy(allergy = a, user_email = user_email)
-        return redirect(url_for('dietary-restriction'))
+            db.session.add(allergy)
+            db.session.commit()
+
+        return redirect(url_for('dietary_restriction'))
 
     return render_template("allergy.html")
 
-@app.route("/dietary-restriction", methods=['GET', 'POST'])
+@app.route("/dietary_restriction", methods=['GET', 'POST'])
 def dietary_restriction():
-    form = DietaryRestrictionForm()
-    return render_template("dietary-restriction.html", form = form)
+    user_email = session.get("user_email", None)
+
+    if request.method == 'POST':
+        selected_options = request.form.getlist('dietary_restrictions')
+
+        for d in selected_options:
+            dietary_restriction = DietaryRestriction(dietary_restriction = d, user_email = user_email)
+            db.session.add(dietary_restriction)
+            db.session.commit()
+
+        flash('Your account has been created!', 'success')
+        return redirect(url_for('home'))
+    
+    return render_template("dietary-restriction.html")
+
+# for testing and displaying all rows in the database (run in python3)
+def displayUsers():
+    for user in User.query.all():
+        print(user)
 
 
 # call function to populate food items database
