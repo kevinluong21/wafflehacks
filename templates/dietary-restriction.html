@@ -1,1 +1,81 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid">
+    <form method="POST" action="">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <p>Please select all of your dietary restrictions.</p>
+                <div class="form-outline text">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col">
+                                <input type="checkbox" id="option1" name="dietary_restrictions" value="gluten-free">
+                                <label for="option1">gluten-free</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option2" name="dietary_restrictions" value="dairy-free">
+                                <label for="option2">dairy-free</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option3" name="dietary_restrictions" value="vegetarian">
+                                <label for="option3">vegetarian</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <input type="checkbox" id="option4" name="dietary_restrictions" value="vegan">
+                                <label for="option4">vegan</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option5" name="dietary_restrictions" value="pescatarian">
+                                <label for="option5">pescatarian</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option6" name="dietary_restrictions" value="nut-free">
+                                <label for="option6">nut-free</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <input type="checkbox" id="option7" name="dietary_restrictions" value="shellfish-free">
+                                <label for="option7">shellfish-free</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option8" name="dietary_restrictions" value="sugar-free">
+                                <label for="option8">sugar-free</label>
+                            </div>
+
+                            <div class="col">
+                                <input type="checkbox" id="option9" name="dietary_restrictions" value="kosher">
+                                <label for="option9">kosher</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <input type="checkbox" id="option10" name="dietary_restrictions" value="halal">
+                                <label for="option10">halal</label>
+                            </div>
+
+                            <div class="col">
+                                
+                            </div>
+
+                            <div class="col">
+                                
+                            </div>
+                        </div>
+
+                        <input type="submit" class="btn btn-outline-info" value="Submit">
+                    </form>
+        </fieldset>
+    </form>
+</div>
+{% endblock content %}
