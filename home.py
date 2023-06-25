@@ -6,30 +6,25 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
-from populate_db import populate_food_items
+# from populate_db import populate_food_items
 
 
 app = Flask(__name__)
 
 # used to protect against modifying cookies! MUST HAVE!
 app.config['SECRET_KEY'] = "b272d0b5e8ddc9e3ff92e6853766147c"
-# creates URI for the food items database
-app.config['FOOD_DATABASE_URI'] = "sqlite:///food_items.db"
+
 # creates a new file of site.db for the database of users
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
+# creates URI for the food items database, need to bind db to SQLAlchemy instance
+app.config['SQLALCHEMY_BINDS'] = {
+    'food_db': 'sqlite:///food_items.db'
+}
 app.app_context().push()
 db = SQLAlchemy(app)
-food_db = SQLAlchemy(app)   # define the food database instance
+
 bcrypt = Bcrypt(app)
 
-class FoodItem(food_db.Model):
-    # id = db.Column(db.Integer, primary_key=True) # might not be necessary
-    name = food_db.Column(db.String(100), nullable=False)
-    description = food_db.Column(food_db.Text, nullable=True)
-    # more parameters?
-
-    def __repr__(self):
-        return f"FoodItem('{self.name}', '{self.description}')"
 
 class User(db.Model):
     email = db.Column(db.String, primary_key=True, unique=True)
@@ -46,10 +41,22 @@ class User(db.Model):
     def __repr__(self):  # for testing
         return f"User('{self.email}', '{self.first_name}', '{self.last_name}', '{self.city}', '{self.country}', '{self.first_name}')"
 
+
+class FoodItem(db.Model):
+    # id jk necessary oy else there is no primary key column specified
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    # more parameters?
+
+    def __repr__(self):
+        return f"FoodItem('{self.name}', '{self.description}')"
+
+
 # create database file and tables
-with app.app_context():
-    db.create_all()
-    food_db.create_all()
+# db.create_all()
+# with app.app_context():
+#     db.create_all(bind_key='food_db')
 
 
 class Allergy(db.Model):
@@ -97,7 +104,8 @@ def register():
         city = form.city.data
         country = form.country.data
 
-        user = User(first_name = first_name, last_name = last_name, email = email, password = password, city = city, country = country)
+        user = User(first_name=first_name, last_name=last_name,
+                    email=email, password=password, city=city, country=country)
         session["user_email"] = user.email
 
         db.session.add(user)
@@ -105,12 +113,12 @@ def register():
 
         return redirect(url_for('allergy'))
 
-    return render_template("register.html", form = form)
+    return render_template("register.html", form=form)
+
 
 @app.route("/allergy", methods=['GET', 'POST'])
 def allergy():
     user_email = session.get("user_email", None)
-    
     if request.method == 'POST':
         selected_options = request.form.getlist('allergies')
 
@@ -145,9 +153,28 @@ def displayUsers():
     for user in User.query.all():
         print(user)
 
+def create_tables():
+    with app.app_context():
+        db.create_all()
 
-# call function to populate food items database
-populate_food_items()
+
+def populate_food_items():
+    with app.app_context():
+        # Create the food items
+        pizza = FoodItem(name='Pizza', description='gluten')
+        burger = FoodItem(name='Burger', description='gluten')
+        salad = FoodItem(name='Salad', description='nuts')
+
+        # Add the food items to the database
+        db.session.add(pizza)
+        db.session.add(burger)
+        db.session.add(salad)
+
+        # Commit the changes to the database
+        db.session.commit()
+
 
 if __name__ == '__main__':  # allows us to run the file using only "python filename.py"
+    create_tables()
+    populate_food_items()  # Call the function to populate the food items database
     app.run(debug=True)
